@@ -1,4 +1,9 @@
-#include "Tr.h"
+#include "TR.h"
+#include "stddef.h"
+#include <iostream>
+#include <string>
+
+
 template<typename T>
 inline Tr<T>::~Tr()
 {
@@ -8,37 +13,39 @@ inline Tr<T>::~Tr()
 template<typename T>
 void Tr<T>::insert(node<T> v)
 {
-	node<T> *vv = new node(v);
+	node<T> *vv = new node<T>;
+	vv->value = v.value;
+	vv->data = v.data;
 	node<T> *cur = Root;
 	node<T> *par = Root;
-	if (cur == nullptr)
+	if (cur == NULL)
 		Root = vv;
 	else
 	{
 		while (1)
 		{
-			if (cur.value == vv.value)
+			if (cur->value == vv->value)
 			{
 				std::cout << "중복된 숫자입니다!\n";
 				return;
 			}
-			if (cur.value > vv.value)
+			if (cur->value > vv->value)
 			{
 				par = cur;
-				cur = cur.left;
-				if (cur == nullptr)
+				cur = cur->left;
+				if (cur == NULL)
 				{
-					par.left = vv;
+					par->left = vv;
 					break;
 				}
 			}
 			else
 			{
 				par = cur;
-				cur = cur.right;
-				if (cur == nullptr)
+				cur = cur->right;
+				if (cur == NULL)
 				{
-					par.right = vv;;
+					par->right = vv;;
 					break;
 				}
 			}
@@ -47,11 +54,11 @@ void Tr<T>::insert(node<T> v)
 }
 
 template<typename T>
-void Tr<T>::Delete(node<T> v)
+void Tr<T>::Delete(int n)
 {
 	node<T> *cur = Root;
 	node<T> *par = Root;
-	if (cur == nullptr)
+	if (cur == NULL)
 	{
 		std::cout << "노드를 찾을 수 없습니다!\n";
 		return;
@@ -60,115 +67,152 @@ void Tr<T>::Delete(node<T> v)
 	{
 		while (1)
 		{
-			if (cur.data == v.data)
-			{
+			if (cur == NULL)
 				break;
-			}
-			if (cur == nullptr)
-			{
-				std::cout << "노드를 찾을 수 없습니다!\n";
-				return;
-			}
-			if (cur.value > v.value)
-			{
-				par = cur;
-				cur = cur.left;
-			}
+
+			if (cur->value == n)
+				break;
+
+			par = cur;
+			if (cur->value > n)
+				cur = cur->left;
 			else
-			{
-				par = cur;
-				cur = cur.right;
-			}
+				cur = cur->right;
 		}
-		node<T> *max;
-		node<T> *max_par = cur;
-		if (cur->left == nullptr)
+
+		if(cur == NULL)
 		{
-			if (cur->right == nullptr)
+			std::cout << "노드를 찾을 수 없습니다!\n";
+			return;
+		}
+
+
+		node<T> *max = cur->left;
+		node<T> *max_par = cur;
+		if (cur->left == NULL)
+		{
+			if (cur->right == NULL)
 			{
-				if (par.left == cur)
-					par.left = nullptr;
+				if (par->left == cur)
+					par->left = NULL;
 				else
-					par.right = nullptr;
+					par->right = NULL;
 			}
 			else
 			{
-				if (par.left == cur)
-					par.left = cur.right;
+				if (par->left == cur)
+					par->left = cur->right;
 				else
-					par.right = cur.right;
+					par->right = cur->right;
 			}
-			delete cur;
+			if (cur == Root)
+				Root = cur->right;
 		}
 		else
 		{
-			max = cur->left;
-			while (max->right == nullptr)
+			while (max->right != NULL)
 			{
 				max_par = max;
 				max = max->right;
 			}
 			if (max_par == cur)
 			{
-				if (par.left == max)
-					par.left = max;
-				else
-					par.right = max;
+				if (par->left == cur)
+				{
+					par->left = max;
+					max->right = cur->right;
+				}
+				else 
+				{
+					par->right = max;
+					max->right = cur->right;
+				}
 
 			}
 			else
 			{
-				max_par.right = max.left;
+				max_par->right = max->left;
 
-				if (par.left == cur)
-					par.left = max;
-				else
-					par.right = max;
-
-				max.left = cur.left;
-				max.right = cur.right;
+				if (par->left == cur)
+				{
+					par->left = max;
+				}
+				else 
+				{
+					par->right = max;
+				}
+				
+				max->left = cur->left;
+				max->right = cur->right;
 			}
-			delete cur;
+			if (cur == Root)
+				Root = max;
 		}
+
+
+		std::cout << cur->value << " " << cur->data << "가 삭제되었습니다.\n";
+		delete cur;
 	}
 
 
 
 }
-
 template<typename T>
-node<T> Tr<T>::Search(node<T> *root, T data)
+node<T>* Tr<T>::Search(node<T> *root, T data)
 {
-	if (root == nullptr)
-		return nullptr;
+	if (root == NULL)
+		return NULL;
 	else
 	{
-		if (root.data == data)
-			return *root;
+		if (root->data == data)
+			return root;
 
-		node<T> res = nullptr;
-		node<T> temp = nullptr;
+		node<T>* res = NULL;
+		node<T>* temp = NULL;
 		temp = Search(root->left, data);
-		if (temp != nullptr)
+		if (temp != NULL)
 			res = temp;
 
 		temp = Search(root->right, data);
-		if (temp != nullptr)
+		if (temp != NULL)
 			res = temp;
 
 		return res;
+	}
+}
+template<typename T>
+node<T>* Tr<T>::Search(node<T> *root, int n)
+{
+	if (root == NULL)
+		return NULL;
+	else
+	{
+		node<T>* cur = root;
+
+		while (cur->value != n)
+		{
+			if (cur->value == NULL)
+				return NULL;
+
+
+			if (cur->value > n)
+				cur = cur->left;
+			else
+				cur = cur->right;
+		}
 	}
 }
 
 template<typename T>
 void Tr<T>::print(node<T> *root)
 {
-	if (root == nullptr)
+
+	if (root == NULL)
 		return;
 	else
 	{
-		std::cout << root->value << " " << root->data << std::endl;
 		print(root->left);
+		std::cout << root->value << " " << root->data << std::endl;
 		print(root->right);
 	}
 }
@@ -176,7 +220,7 @@ void Tr<T>::print(node<T> *root)
 template<typename T>
 void Tr<T>::reset(node<T>* root)
 {
-	if (root == nullptr)
+	if (root == NULL)
 		return;
 
 	reset(root->left);

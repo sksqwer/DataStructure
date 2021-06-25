@@ -9,7 +9,6 @@ struct node
 	T data;
 	node * left = NULL;
 	node * right = NULL;
-	node<T>(int value, T data) : value(value), data(data) {}
 };
 
 template<typename T>
@@ -20,8 +19,9 @@ public:
 	Tr() {}
 	~Tr();
 	void insert(node<T> v);
-	void Delete(node<T> v);
-	node<T> Search(node<T> *root, T data);
+	void Delete(int n);
+	node<T>* Search(node<T> *root, T data);
+	node<T>* Search(node<T> *root, int n);
 	void print(node<T> *root);
 	void reset(node<T> *root);
 };

@@ -1,7 +1,7 @@
 ﻿#include <iostream>
 #include <string>
 
-#include "Tr.h"
+#include "TR.cpp"
 
 using namespace std;
 
@@ -10,7 +10,7 @@ void Menu(Tr<T> t);
 
 int main()
 {
-	Tr<int> t;
+	Tr<string> t;
 	Menu(t);
 
 
@@ -22,8 +22,8 @@ template<typename T>
 void Menu(Tr<T> t)
 {
 	int n;
-	int v;
 	T d;
+	node<T> temp;
 	while (1)
 	{
 		cout << "(1) 삽입 (2) 삭제 (3) 검색 (4) 출력 (0) 종료: ";
@@ -35,28 +35,44 @@ void Menu(Tr<T> t)
 		{
 			cout << "삽입하는 데이터를 입력하세요.\n";
 			cout << "번호: ";
-			cin >> v;
+			cin >> temp.value;
 			cout << "이름: ";
-			cin >> d;
-			t.insert(node<T>(v, d));
+			cin >> temp.data;
+			t.insert(temp);
 		}
 		break;
 		case 2:
 		{
 			cout << "삭제하는 데이터를 입력하세요.\n";
 			cout << "번호: ";
-			cin >> v;
-			t.Delete(node<T>(v, 0));
+			cin >> n;
+			t.Delete(n);
 		}
 		break;
 		case 3:
 		{
-			cout << "검색하는 데이터를 입력하세요.\n";
-			cout << "번호: ";
-			cin >> v;
-			cout << "이름: ";
-			cin >> d;
-			t.Search(t.Root, d);
+			cout << "번호로 검색(1), 이름으로 검색(2): ";
+			cin >> n;
+			
+			if (n == 2)
+			{
+				cout << "검색하는 데이터를 입력하세요.\n";
+				cout << "이름: ";
+				cin >> temp.data;
+				temp = *(t.Search(t.Root, temp.data));
+			}
+			else if (n == 1)
+			{
+				cout << "검색하는 번호를 입력하세요.\n";
+				cout << "번호: ";
+				cin >> temp.value;
+				temp = *(t.Search(t.Root, temp.value));
+			}
+
+			if (temp.value == NULL)
+				cout << "검색하는 데이터가 존재 하지 않습니다.\n";
+			else
+				cout << temp.value << " " << temp.data << endl;
 
 		}
 		break;
