@@ -18,5 +18,13 @@
     <ClCompile Include="DataStructure.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="TR.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="TR.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
