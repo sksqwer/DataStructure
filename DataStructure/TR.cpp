@@ -51,6 +51,11 @@ void Tr<T>::insert(node<T> v)
 			}
 		}
 	}
+
+
+	print_Tree();
+	toAVL(Root, Root);
+	print_Tree();
 }
 
 template<typename T>
@@ -86,27 +91,32 @@ void Tr<T>::Delete(int n)
 			return;
 		}
 
-
 		node<T> *max = cur->left;
 		node<T> *max_par = cur;
 		if (cur->left == NULL)
 		{
 			if (cur->right == NULL)
 			{
-				if (par->left == cur)
+				if (cur == Root)
+				{
+					Root = NULL;
+				}
+				else if (par->left == cur)
 					par->left = NULL;
 				else
 					par->right = NULL;
 			}
 			else
 			{
-				if (par->left == cur)
+				if (cur == Root)
+				{
+					Root = cur->right;
+				}
+				else if (par->left == cur)
 					par->left = cur->right;
 				else
 					par->right = cur->right;
 			}
-			if (cur == Root)
-				Root = cur->right;
 		}
 		else
 		{
@@ -117,7 +127,12 @@ void Tr<T>::Delete(int n)
 			}
 			if (max_par == cur)
 			{
-				if (par->left == cur)
+				if (cur == Root)
+				{
+					Root = max;
+					max->right = cur->right;
+				}
+				else if (par->left == cur)
 				{
 					par->left = max;
 					max->right = cur->right;
@@ -133,7 +148,11 @@ void Tr<T>::Delete(int n)
 			{
 				max_par->right = max->left;
 
-				if (par->left == cur)
+				if (cur == Root)
+				{
+					Root = max;
+				}
+				else if (par->left == cur)
 				{
 					par->left = max;
 				}
@@ -145,14 +164,16 @@ void Tr<T>::Delete(int n)
 				max->left = cur->left;
 				max->right = cur->right;
 			}
-			if (cur == Root)
-				Root = max;
 		}
 
 
 		std::cout << cur->value << " " << cur->data << "가 삭제되었습니다.\n";
 		delete cur;
 	}
+
+	print_Tree();
+	toAVL(Root, Root);
+	print_Tree();
 
 
 
@@ -227,4 +248,239 @@ void Tr<T>::reset(node<T>* root)
 	reset(root->right);
 
 	delete root;
+}
+
+template<typename T>
+int Tr<T>::check_depth(node<T>* root)
+{
+	if (root == NULL)
+		return 0;
+
+	int res = 1, l, r;
+	l = check_depth(root->left);
+	r = check_depth(root->right);
+
+	if (l > r)
+		res += l;
+	else
+		res += r;
+
+	return res;
+}
+
+template<typename T>
+void Tr<T>::toAVL(node<T>* root, node<T>* R)
+{
+	if (root == NULL) return;
+
+	toAVL(root->left, root);
+	toAVL(root->right, root);
+
+	int ldepth = check_depth(root->left);
+	int rdepth = check_depth(root->right);
+
+	if (abs(ldepth - rdepth) > 1)
+	{
+		if (ldepth > rdepth)
+		{
+			if (root->left == NULL)
+				return;
+
+			ldepth = check_depth(root->left->left);
+			rdepth = check_depth(root->left->right);
+
+			if (abs(ldepth - rdepth) > 1)
+			{
+				if (ldepth > rdepth)
+				{
+					if (root == Root)
+					{
+						node<T> *temp = root->left->right;
+						Root = root->left;
+						Root->right = root;
+						root->right = temp;
+					}
+					else
+					{
+						if (R->left = root)
+						{
+							node<T> *temp = root->left->right;
+							R->left = root->left;
+							R->left->right = root;
+							root->left = temp;
+						}
+						else
+						{
+							node<T> *temp = root->left->right;
+							R->right = root->left;
+							R->right->right = root;
+							root->left = temp;
+						}
+					}
+
+
+				}
+				else
+				{
+					if (root == Root)
+					{
+						node<T> *temp = root->left->right->left;
+						node<T> *temp2 = root->left->right->right;
+						Root = root->left->right;
+						Root->right = root;
+						Root->left = root->left;
+						root->left->right = temp;
+						root->left = temp2;
+					}
+					else
+					{
+						if (R->left = root)
+						{
+							node<T> *temp = root->left->right->left;
+							node<T> *temp2 = root->left->right->right;
+							R->left = root->left->right;
+							R->left->right = root;
+							R->left->left = root->left;
+							root->left->right = temp;
+							root->left = temp2;
+						}
+						else
+						{
+							node<T> *temp = root->left->right->left;
+							node<T> *temp2 = root->left->right->right;
+							R->right = root->left->right;
+							R->right->right = root;
+							R->right->left = root->left;
+							root->left->right = temp;
+							root->left = temp2;
+						}
+					}
+				}
+			}
+		}
+		else
+		{
+			if (root->right == NULL)
+				return;
+
+			ldepth = check_depth(root->right->left);
+			rdepth = check_depth(root->right->right);
+
+			if (abs(ldepth - rdepth) > 1)
+			{
+				if (ldepth > rdepth)
+				{
+					if (root == Root)
+					{
+						node<T> *temp = root->right->left;
+						Root = root->right;
+						Root->left = root;
+						root->right = temp;
+					}
+					else
+					{
+						if (R->left = root)
+						{
+							node<T> *temp = root->right->left;
+							R->left = root->right;
+							R->left->left = root;
+							root->right = temp;
+						}
+						else
+						{
+							node<T> *temp = root->right->left;
+							R->right = root->right;
+							R->right->left = root;
+							root->right = temp;
+						}
+					}
+
+
+				}
+				else
+				{
+					if (root == Root)
+					{
+						node<T> *temp = root->right->left->left;
+						node<T> *temp2 = root->right->left->right;
+						Root = root->right->left;
+						Root->left = root;
+						Root->right = root->right;
+						root->right = temp;
+						Root->right->left = temp2;
+					}
+					else
+					{
+						if (R->left = root)
+						{
+							node<T> *temp = root->right->left->left;
+							node<T> *temp2 = root->right->left->right;
+							R->left = root->right->left;
+							R->left->left = root;
+							R->left->right = root->right;
+							root->right = temp;
+							R->left->right->left = temp2;
+						}
+						else
+						{
+							node<T> *temp = root->right->left->left;
+							node<T> *temp2 = root->right->left->right;
+							R->right = root->right->left;
+							R->right->left = root;
+							R->right->right = root->right;
+							root->right = temp;
+							R->right->right->left = temp2;
+						}
+					}
+				}
+			}
+		}
+	}
+
+}
+
+template<typename T>
+void Tr<T>::print_Tree()
+{
+	if (Root == nullptr || Root == NULL)
+		return;
+
+	int depth = check_depth(Root);
+	int w = pow(2, depth);
+
+	int arr[10][1025] = { -1 };
+	memset(arr, -1, sizeof(int) * 10 * 1025);
+
+
+
+	int itr = w / 2;
+	drawarr(Root, 0, itr, arr);
+
+	for (int i = 0; i < depth; i++)
+	{
+		for (int j = 0; j < w; j++)
+		{
+			if (arr[i][j] == -1)
+				std::cout << " ";
+			else
+				std::cout << arr[i][j];
+		}
+		std::cout << std::endl;
+	}
+
+}
+
+template<typename T>
+void Tr<T>::drawarr(node<T> *root, int depth, int itr, int arr[][1025])
+{
+
+	if (root == nullptr)
+		return;
+
+	arr[depth][itr] = root->value;
+	int n = pow(2, check_depth(this->Root) - depth - 2);
+	drawarr(root->left, depth + 1, itr - n, arr);
+	drawarr(root->right, depth + 1, itr + n, arr);
+
+
 }

@@ -78,8 +78,12 @@ void Menu(Tr<T> t)
 		break;
 		case 4:
 		{
+			int size = 0;
+			cout << t.check_depth(t.Root) << endl;
+			cout << size << endl;
 			cout << "[모든 노드 출력]\n";
 			t.print(t.Root);
+			t.print_Tree();
 		}
 		break;
 		case 0:
